@@ -5,7 +5,7 @@ import { useGame } from '@/lib/game-context';
 import { TICKET_SIZE } from '@/types/game';
 
 export default function SelectionPhase() {
-  const { gameState, currentPlayer, updatePlayerTicket, startPlaying } = useGame();
+  const { gameState, currentPlayer, updatePlayerTicket, startPlaying, isAdmin } = useGame();
   const [selectedFears, setSelectedFears] = useState<number[]>([]);
 
   // Загружаем уже выбранные страхи, если они есть
@@ -70,6 +70,7 @@ export default function SelectionPhase() {
               >
                 {player.name}
                 {player.id === currentPlayer.id && ' (Вы)'}
+                {player.id === gameState.adminId && ' 👑'}
                 <br />
                 <span className={`text-sm ${
                   player.ticket.length === TICKET_SIZE
@@ -149,7 +150,7 @@ export default function SelectionPhase() {
         )}
 
         {/* Все игроки готовы */}
-        {allPlayersReady && (
+        {allPlayersReady && isAdmin && (
           <div className="bg-black/40 rounded-lg p-6 border-2 border-halloween-green">
             <h2 className="text-2xl font-bold text-center mb-4 text-halloween-green">
               🎉 Все игроки готовы! 🎉
@@ -160,6 +161,17 @@ export default function SelectionPhase() {
             >
               Начать игру! 🎃
             </button>
+          </div>
+        )}
+
+        {allPlayersReady && !isAdmin && (
+          <div className="bg-black/40 rounded-lg p-6 border-2 border-halloween-green">
+            <h2 className="text-2xl font-bold text-center mb-4 text-halloween-green">
+              🎉 Все игроки готовы! 🎉
+            </h2>
+            <p className="text-center text-xl text-white">
+              Ожидание начала игры от администратора 👑
+            </p>
           </div>
         )}
       </div>

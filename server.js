@@ -18,6 +18,7 @@ let gameState = {
   drawnFears: [],
   totalPrize: 0,
   winner: null,
+  adminId: null, // ID администратора (первый игрок)
 };
 
 app.prepare().then(() => {
@@ -56,6 +57,12 @@ app.prepare().then(() => {
       };
       gameState.players.push(newPlayer);
       gameState.totalPrize += data.bet;
+
+      // Первый игрок становится администратором
+      if (gameState.players.length === 1) {
+        gameState.adminId = newPlayer.id;
+        console.log(`Admin set: ${newPlayer.name} (${newPlayer.id})`);
+      }
 
       // Отправляем ID игрока обратно клиенту, который его создал
       socket.emit('playerCreated', { playerId: newPlayer.id });
@@ -162,6 +169,7 @@ app.prepare().then(() => {
         drawnFears: [],
         totalPrize: 0,
         winner: null,
+        adminId: null,
       };
       io.emit('gameState', gameState);
     });

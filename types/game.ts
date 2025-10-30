@@ -19,6 +19,7 @@ export interface GameState {
   drawnFears: number[];
   totalPrize: number;
   winner: Player | null;
+  adminId: string | null; // ID администратора (первый игрок)
 }
 
 export const TICKET_SIZE = 15; // Размер билета игрока

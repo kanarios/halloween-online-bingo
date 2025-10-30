@@ -3,7 +3,7 @@
 import { useGame } from '@/lib/game-context';
 
 export default function FinishedPhase() {
-  const { gameState, resetGame } = useGame();
+  const { gameState, resetGame, isAdmin } = useGame();
 
   if (!gameState.winner) return null;
 
@@ -89,12 +89,20 @@ export default function FinishedPhase() {
             ))}
           </div>
 
-          <button
-            onClick={resetGame}
-            className="mt-8 w-full bg-halloween-green hover:bg-teal-500 text-black font-bold py-4 px-6 rounded-lg transition-colors text-xl"
-          >
-            Начать новую игру
-          </button>
+          {isAdmin && (
+            <button
+              onClick={resetGame}
+              className="mt-8 w-full bg-halloween-green hover:bg-teal-500 text-black font-bold py-4 px-6 rounded-lg transition-colors text-xl"
+            >
+              Начать новую игру
+            </button>
+          )}
+
+          {!isAdmin && (
+            <p className="mt-8 text-center text-xl text-halloween-green">
+              Ожидание новой игры от администратора 👑
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@ interface GameContextType {
   startSelection: () => void;
   startPlaying: () => void;
   isConnected: boolean;
-  isHost: boolean;
+  isAdmin: boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -29,6 +29,7 @@ const initialGameState: GameState = {
   drawnFears: [],
   totalPrize: 0,
   winner: null,
+  adminId: null,
 };
 
 let socket: Socket | null = null;
@@ -37,17 +38,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
   const [isConnected, setIsConnected] = useState(false);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
-  const [isHost, setIsHost] = useState(false);
 
   // Загружаем playerId из localStorage при инициализации
   useEffect(() => {
     const savedPlayerId = localStorage.getItem('currentPlayerId');
-    const savedIsHost = localStorage.getItem('isHost') === 'true';
     if (savedPlayerId) {
       setCurrentPlayerId(savedPlayerId);
-    }
-    if (savedIsHost) {
-      setIsHost(true);
     }
   }, []);
 
@@ -131,6 +127,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     ? gameState.players.find(p => p.id === currentPlayerId) || null
     : null;
 
+  // Определяем, является ли текущий игрок администратором
+  const isAdmin = currentPlayerId !== null && currentPlayerId === gameState.adminId;
+
   return (
     <GameContext.Provider
       value={{
@@ -145,7 +144,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         startSelection,
         startPlaying,
         isConnected,
-        isHost,
+        isAdmin,
       }}
     >
       {children}

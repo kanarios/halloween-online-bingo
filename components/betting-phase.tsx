@@ -5,7 +5,7 @@ import { useGame } from '@/lib/game-context';
 import { MIN_BET, MAX_BET } from '@/types/game';
 
 export default function BettingPhase() {
-  const { gameState, currentPlayer, addPlayer, startSelection, isHost } = useGame();
+  const { gameState, currentPlayer, addPlayer, startSelection, isAdmin } = useGame();
   const [name, setName] = useState('');
   const [bet, setBet] = useState(10);
 
@@ -136,7 +136,7 @@ export default function BettingPhase() {
                 <span className="font-semibold text-white">
                   {player.name}
                   {player.id === currentPlayer.id && ' (Вы)'}
-                  {player.id === gameState.players[0]?.id && ' 👑'}
+                  {player.id === gameState.adminId && ' 👑'}
                 </span>
                 <span className="text-halloween-orange font-bold">
                   {player.bet} монет
@@ -155,14 +155,20 @@ export default function BettingPhase() {
             </p>
           </div>
 
-          {/* Кнопка начала игры (любой может начать) */}
-          {gameState.players.length >= 2 && (
+          {/* Кнопка начала игры (только администратор) */}
+          {gameState.players.length >= 2 && isAdmin && (
             <button
               onClick={startSelection}
               className="w-full bg-halloween-green hover:bg-teal-500 text-black font-bold py-3 px-6 rounded-lg transition-colors"
             >
               Начать выбор страхов →
             </button>
+          )}
+
+          {gameState.players.length >= 2 && !isAdmin && (
+            <p className="text-center text-halloween-green">
+              Ожидание начала игры от администратора 👑
+            </p>
           )}
 
           {gameState.players.length < 2 && (

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useGame } from '@/lib/game-context';
 
 export default function PlayingPhase() {
-  const { gameState, currentPlayer, drawFear, markFearOnTicket, checkWinner } = useGame();
+  const { gameState, currentPlayer, drawFear, markFearOnTicket, checkWinner, isAdmin } = useGame();
   const [currentFear, setCurrentFear] = useState<number | null>(null);
 
   // Отслеживаем последний вытянутый страх
@@ -40,20 +40,21 @@ export default function PlayingPhase() {
           🎰 Игра началась! 🎰
         </h1>
 
-        {/* Панель ведущего */}
-        <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-orange">
-          <h2 className="text-2xl font-bold mb-4 text-halloween-green">
-            🎃 Панель ведущего
-          </h2>
+        {/* Панель ведущего (только для администратора) */}
+        {isAdmin && (
+          <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-orange">
+            <h2 className="text-2xl font-bold mb-4 text-halloween-green">
+              🎃 Панель администратора
+            </h2>
 
-          <div className="mb-4">
-            <button
-              onClick={handleDrawFear}
-              className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-colors text-xl"
-            >
-              Вытянуть страх
-            </button>
-          </div>
+            <div className="mb-4">
+              <button
+                onClick={handleDrawFear}
+                className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-colors text-xl"
+              >
+                Вытянуть страх
+              </button>
+            </div>
 
           {currentFearData && (
             <div className="bg-halloween-purple/30 p-6 rounded-lg border-2 border-halloween-orange animate-pulse">
@@ -71,7 +72,8 @@ export default function PlayingPhase() {
               Вытянуто страхов: {gameState.drawnFears.length} / {gameState.fears.length}
             </p>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Список вытянутых страхов */}
         <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-purple">
@@ -107,6 +109,7 @@ export default function PlayingPhase() {
               >
                 {player.name}
                 {player.id === currentPlayer.id && ' (Вы)'}
+                {player.id === gameState.adminId && ' 👑'}
                 <br />
                 <span className="text-sm text-halloween-green">
                   {player.markedNumbers.length}/{player.ticket.length}
