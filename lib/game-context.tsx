@@ -49,7 +49,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Инициализация Socket.io
-    socket = io('http://localhost:3000', {
+    // Подключаемся к текущему хосту (поддержка localhost и ngrok)
+    const socketUrl = typeof window !== 'undefined'
+      ? `${window.location.protocol}//${window.location.host}`
+      : 'http://localhost:3000';
+
+    socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
     });
 
