@@ -1,96 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import { useGame } from '@/lib/game-context';
-import { MIN_BET, MAX_BET } from '@/types/game';
+import PlayerGate from '@/components/player-gate';
 
 export default function BettingPhase() {
-  const { gameState, currentPlayer, addPlayer, startSelection, isAdmin } = useGame();
-  const [name, setName] = useState('');
-  const [bet, setBet] = useState(10);
-
-  const handleAddPlayer = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (name.trim() && bet >= MIN_BET && bet <= MAX_BET) {
-      addPlayer(name.trim(), bet);
-      setName('');
-      setBet(10);
-    }
-  };
+  const { gameState, currentPlayer, startSelection, isAdmin } = useGame();
 
   // Если игрок еще не зарегистрирован - показываем форму регистрации
   if (!currentPlayer) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold text-center mb-4 text-halloween-orange">
-            🎃 Страшное Бинго 🎃
-          </h1>
-          <p className="text-center text-xl mb-8 text-halloween-green">
-            Хэллоуинская игра со страхами тестировщиков
-          </p>
-
-          <div className="bg-black/40 rounded-lg p-6 mb-8 border-2 border-halloween-orange">
-            <h2 className="text-2xl font-bold mb-4 text-halloween-orange">
-              💰 Регистрация
-            </h2>
-            <p className="text-lg mb-6 text-white">
-              Зарегистрируйтесь, чтобы присоединиться к игре
-            </p>
-
-            <form onSubmit={handleAddPlayer} className="mb-6">
-              <div className="mb-4">
-                <label className="block text-lg mb-2 text-halloween-green">
-                  Ваше имя
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 bg-halloween-black border-2 border-halloween-purple rounded text-white focus:outline-none focus:border-halloween-orange"
-                  placeholder="Введите ваше имя"
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-lg mb-2 text-halloween-green">
-                  Ваша ставка ({MIN_BET}-{MAX_BET} монет)
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min={MIN_BET}
-                    max={MAX_BET}
-                    value={bet}
-                    onChange={(e) => setBet(Number(e.target.value))}
-                    className="flex-1"
-                  />
-                  <span className="text-2xl font-bold text-halloween-orange w-16 text-center">
-                    {bet}
-                  </span>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-              >
-                Присоединиться к игре
-              </button>
-            </form>
-
-            {gameState.players.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-halloween-purple">
-                <p className="text-center text-halloween-green mb-3">
-                  Уже зарегистрировано игроков: {gameState.players.length}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+    return <PlayerGate phase="betting" />;
   }
 
   // Если игрок зарегистрирован - показываем лобби

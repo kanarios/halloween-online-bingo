@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '@/lib/game-context';
 import { TICKET_SIZE } from '@/types/game';
+import PlayerGate from '@/components/player-gate';
 
 export default function SelectionPhase() {
   const { gameState, currentPlayer, updatePlayerTicket, startPlaying, isAdmin } = useGame();
@@ -37,13 +38,7 @@ export default function SelectionPhase() {
   const hasTicket = currentPlayer && currentPlayer.ticket.length === TICKET_SIZE;
 
   if (!currentPlayer) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-2xl text-white">Загрузка...</p>
-        </div>
-      </div>
-    );
+    return <PlayerGate phase="selection" />;
   }
 
   return (

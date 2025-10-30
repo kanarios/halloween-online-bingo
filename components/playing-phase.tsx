@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useGame } from '@/lib/game-context';
+import PlayerGate from '@/components/player-gate';
 
 export default function PlayingPhase() {
   const { gameState, currentPlayer, drawFear, markFearOnTicket, checkWinner, isAdmin } = useGame();
@@ -24,13 +25,7 @@ export default function PlayingPhase() {
   const currentFearData = gameState.fears.find(f => f.id === currentFear);
 
   if (!currentPlayer) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-2xl text-white">Загрузка...</p>
-        </div>
-      </div>
-    );
+    return <PlayerGate phase="playing" />;
   }
 
   return (
