@@ -99,26 +99,58 @@ app.prepare().then(() => {
       );
       gameState.drawnFears.push(randomFear.id);
 
-      // Автоматически отмечаем страх у всех игроков
+      // Игроки сами отмечают страхи вручную
+      // Не отмечаем автоматически!
+
+      io.emit('gameState', gameState);
+      socket.emit('drawResult', randomFear.id);
+    });
+
+    // Ручная отметка страха игроком
+    socket.on('markFear', (data) => {
+      const { playerId, fearId } = data;
+
       gameState.players = gameState.players.map(p => {
-        if (p.ticket.includes(randomFear.id) && !p.markedNumbers.includes(randomFear.id)) {
-          return { ...p, markedNumbers: [...p.markedNumbers, randomFear.id] };
+        if (p.id === playerId) {
+          // Переключаем отметку (toggle)
+          if (p.markedNumbers.includes(fearId)) {
+            // Если уже отмечен - снимаем отметку
+            return { ...p, markedNumbers: p.markedNumbers.filter(id => id !== fearId) };
+          } else {
+            // Если не отмечен - добавляем отметку
+            return { ...p, markedNumbers: [...p.markedNumbers, fearId] };
+          }
         }
         return p;
       });
 
-      // Проверяем победителя
-      const winner = gameState.players.find(
-        p => p.ticket.length > 0 && p.ticket.every(fearId => p.markedNumbers.includes(fearId))
-      );
+      io.emit('gameState', gameState);
+    });
+
+    // Проверка победителя (вызывается игроком)
+    socket.on('checkWinner', () => {
+      // Проверяем всех игроков
+      const winner = gameState.players.find(p => {
+        if (p.ticket.length === 0) return false;
+
+        // Игрок должен отметить ВСЕ вытянутые страхи из своего билета
+        const drawnFearsInTicket = p.ticket.filter(fearId => gameState.drawnFears.includes(fearId));
+        const allDrawnMarked = drawnFearsInTicket.every(fearId => p.markedNumbers.includes(fearId));
+
+        // Игрок НЕ должен отметить лишние страхи (которых нет в вытянутых)
+        const noExtraMarks = p.markedNumbers.every(fearId => gameState.drawnFears.includes(fearId));
+
+        // Игрок должен закрыть ВСЕ страхи в своем билете
+        const allTicketMarked = p.ticket.every(fearId => p.markedNumbers.includes(fearId));
+
+        return allDrawnMarked && noExtraMarks && allTicketMarked;
+      });
 
       if (winner && !gameState.winner) {
         gameState.winner = winner;
         gameState.phase = 'finished';
+        io.emit('gameState', gameState);
       }
-
-      io.emit('gameState', gameState);
-      socket.emit('drawResult', randomFear.id);
     });
 
     // Сброс игры

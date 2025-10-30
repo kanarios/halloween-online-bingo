@@ -109,12 +109,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const markFearOnTicket = useCallback((playerId: string, fearId: number) => {
-    // Эта функция больше не нужна, так как отметки делаются автоматически на сервере
-    // Оставляем для обратной совместимости
+    // Отправляем событие на сервер для ручной отметки страха
+    socket?.emit('markFear', { playerId, fearId });
   }, []);
 
   const checkWinner = useCallback((): Player | null => {
-    // Проверка победителя теперь на сервере
+    // Отправляем запрос на проверку победителя на сервер
+    socket?.emit('checkWinner');
     return gameState.winner;
   }, [gameState.winner]);
 

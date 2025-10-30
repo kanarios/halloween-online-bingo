@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useGame } from '@/lib/game-context';
 
 export default function PlayingPhase() {
-  const { gameState, currentPlayer, drawFear } = useGame();
+  const { gameState, currentPlayer, drawFear, markFearOnTicket, checkWinner } = useGame();
   const [currentFear, setCurrentFear] = useState<number | null>(null);
 
   // Отслеживаем последний вытянутый страх
@@ -118,40 +118,62 @@ export default function PlayingPhase() {
 
         {/* Ваш билет */}
         <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-green">
-          <h2 className="text-2xl font-bold mb-4 text-halloween-orange">
-            Ваш билет:
-          </h2>
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-halloween-orange">
+              Ваш билет:
+            </h2>
+            <p className="text-sm text-halloween-green">
+              Кликайте на номера, чтобы отметить их
+            </p>
+          </div>
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-4">
             {currentPlayer.ticket.map((fearId) => {
               const isMarked = currentPlayer.markedNumbers.includes(fearId);
               const fear = gameState.fears.find(f => f.id === fearId);
+
               return (
-                <div
+                <button
                   key={fearId}
-                  className={`p-4 rounded-lg text-center font-bold transition-all ${
+                  onClick={() => markFearOnTicket(currentPlayer.id, fearId)}
+                  className={`p-4 rounded-lg text-center font-bold transition-all cursor-pointer hover:scale-105 ${
                     isMarked
                       ? 'bg-halloween-green text-black scale-95'
-                      : 'bg-halloween-black/60 text-white border-2 border-halloween-purple'
+                      : 'bg-halloween-black/60 text-white border-2 border-halloween-purple hover:border-halloween-green'
                   }`}
                   title={fear?.description}
                 >
                   #{fearId}
                   {isMarked && ' ✓'}
-                </div>
+                </button>
               );
             })}
           </div>
-          <div className="mt-4 text-center">
+          <div className="mb-4 text-center">
             <p className="text-lg text-halloween-green">
               Закрыто: {currentPlayer.markedNumbers.length} / {currentPlayer.ticket.length}
             </p>
-            {currentPlayer.ticket.length > 0 &&
-             currentPlayer.markedNumbers.length === currentPlayer.ticket.length && (
-              <p className="text-2xl font-bold text-halloween-orange mt-2 animate-bounce">
-                🎉 БИНГО! 🎉
-              </p>
-            )}
           </div>
+
+          {/* Кнопка проверки победителя */}
+          {currentPlayer.markedNumbers.length === currentPlayer.ticket.length && (
+            <button
+              onClick={checkWinner}
+              className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors animate-bounce"
+            >
+              Проверить победителя! 🎉
+            </button>
+          )}
+
+          {currentPlayer.markedNumbers.length < currentPlayer.ticket.length && (
+            <div className="text-center p-3 bg-halloween-purple/20 rounded">
+              <p className="text-sm text-halloween-green">
+                💡 Следите за вытянутыми страхами и отмечайте их в своем билете
+              </p>
+              <p className="text-xs text-halloween-orange mt-1">
+                Внимание! Если отметите лишний страх или пропустите вытянутый - не сможете победить
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
