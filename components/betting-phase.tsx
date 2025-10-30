@@ -13,87 +13,114 @@ export default function BettingPhase() {
 
   // Если игрок зарегистрирован - показываем лобби
   return (
-    <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-center mb-4 text-halloween-orange">
-          🎃 Страшное Бинго 🎃
-        </h1>
-        <p className="text-center text-xl mb-8 text-halloween-green">
-          Хэллоуинская игра со страхами тестировщиков
-        </p>
-
-        {/* Информация о текущем игроке */}
-        <div className="bg-halloween-orange/20 rounded-lg p-6 mb-6 border-2 border-halloween-orange">
-          <h2 className="text-2xl font-bold mb-2 text-halloween-orange">
-            Вы: {currentPlayer.name}
-          </h2>
-          <p className="text-lg text-white">
-            Ваша ставка: <span className="font-bold text-halloween-orange">{currentPlayer.bet} монет</span>
+    <div className="min-h-screen px-6 py-14 md:px-10">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <header className="text-center space-y-3">
+          <span className="uppercase tracking-[0.45em] text-xs text-halloween-green/60">
+            Призыв завершен
+          </span>
+          <h1 className="haunted-heading text-5xl md:text-6xl text-halloween-mist drop-shadow-[0_0_40px_rgba(139,255,87,0.35)]">
+            🎃 Страшное Бинго 🎃
+          </h1>
+          <p className="text-lg text-halloween-mist/70">
+            Круг открыт. Следите за тенями и готовьтесь к выбору страхов.
           </p>
-        </div>
+        </header>
 
-        {/* Лобби */}
-        <div className="bg-black/40 rounded-lg p-6 mb-8 border-2 border-halloween-purple">
-          <h2 className="text-2xl font-bold mb-4 text-halloween-green">
-            👥 Лобби игроков
-          </h2>
-          <p className="text-lg mb-6 text-white">
-            Ожидание других игроков...
-          </p>
-
-          <div className="space-y-2 mb-6">
-            {gameState.players.map((player) => (
-              <div
-                key={player.id}
-                className={`flex justify-between items-center p-3 rounded border ${
-                  player.id === currentPlayer.id
-                    ? 'bg-halloween-orange/30 border-halloween-orange'
-                    : 'bg-halloween-black/60 border-halloween-purple'
-                }`}
-              >
-                <span className="font-semibold text-white">
-                  {player.name}
-                  {player.id === currentPlayer.id && ' (Вы)'}
-                  {player.id === gameState.adminId && ' 👑'}
-                </span>
-                <span className="text-halloween-orange font-bold">
-                  {player.bet} монет
-                </span>
+        <div className="grid gap-8 lg:grid-cols-[1.3fr_1.7fr]">
+          {/* Информация о текущем игроке */}
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-ember/70 bg-haunted-panel p-8 shadow-haunted">
+            <div className="pointer-events-none absolute inset-0 bg-haunted-panel-glare opacity-60 mix-blend-screen" />
+            <div className="relative space-y-4">
+              <h2 className="haunted-heading text-3xl text-halloween-green">
+                Ваш обет
+              </h2>
+              <div className="space-y-2 text-lg text-halloween-mist/80">
+                <p>
+                  Имя: <span className="text-halloween-mist">{currentPlayer.name}</span>
+                </p>
+                <p>
+                  Ставка:{' '}
+                  <span className="text-halloween-green font-semibold">
+                    {currentPlayer.bet} монет
+                  </span>
+                </p>
               </div>
-            ))}
+              <div className="rounded-2xl border border-halloween-green/20 bg-black/30 p-5 text-sm text-halloween-mist/70 shadow-inner">
+                Дождитесь остальных участников. Когда соберется минимум двое, администратор сможет
+                начать ритуал выбора страхов.
+              </div>
+            </div>
           </div>
 
-          <div className="bg-halloween-purple/30 p-4 rounded mb-6 border border-halloween-purple">
-            <p className="text-center text-xl">
-              <span className="text-halloween-green">Общий банк:</span>{' '}
-              <span className="text-halloween-orange font-bold text-2xl">
-                {gameState.totalPrize}
-              </span>{' '}
-              <span className="text-halloween-green">монет</span>
-            </p>
+          {/* Лобби */}
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-ash/70 bg-black/30 p-8 shadow-haunted backdrop-blur">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60 opacity-80" />
+            <div className="relative space-y-6">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <h2 className="haunted-heading text-3xl text-halloween-green">
+                  👥 Лобби игроков
+                </h2>
+                <p className="text-sm uppercase tracking-[0.3em] text-halloween-mist/60">
+                  Общий банк:{' '}
+                  <span className="text-halloween-green font-semibold text-base">
+                    {gameState.totalPrize}
+                  </span>{' '}
+                  монет
+                </p>
+              </div>
+
+              <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                {gameState.players.map((player) => (
+                  <div
+                    key={player.id}
+                    className={`flex justify-between items-center rounded-2xl border bg-halloween-black/60 px-4 py-4 text-sm shadow-inner transition ${
+                      player.id === currentPlayer.id
+                        ? 'border-halloween-green/60 text-halloween-green'
+                        : 'border-halloween-ash/60 text-halloween-mist'
+                    }`}
+                  >
+                    <span className="font-semibold tracking-wide">
+                      {player.name}
+                      {player.id === currentPlayer.id && ' (Вы)'}
+                      {player.id === gameState.adminId && ' 👑'}
+                    </span>
+                    <span className="text-halloween-green font-semibold">
+                      {player.bet} монет
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-2xl border border-halloween-ash/60 bg-halloween-black/60 p-5 text-center text-sm text-halloween-mist/70 shadow-inner">
+                {gameState.players.length < 2
+                  ? 'Нужен минимум ещё один игрок, чтобы запустить следующий ритуал.'
+                  : 'Все готовы? Когда почувствуете зов, запускайте выбор страхов.'}
+              </div>
+
+              {/* Кнопка начала игры (только администратор) */}
+              {gameState.players.length >= 2 && isAdmin && (
+                <button
+                  onClick={startSelection}
+                  className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
+                >
+                  Начать выбор страхов →
+                </button>
+              )}
+
+              {gameState.players.length >= 2 && !isAdmin && (
+                <p className="text-center text-sm uppercase tracking-[0.3em] text-halloween-green/80">
+                  Ожидание начала игры от администратора 👑
+                </p>
+              )}
+
+              {gameState.players.length < 2 && (
+                <p className="text-center text-sm uppercase tracking-[0.3em] text-halloween-mist/60">
+                  Приведите ещё душу, чтобы открыть следующую фазу.
+                </p>
+              )}
+            </div>
           </div>
-
-          {/* Кнопка начала игры (только администратор) */}
-          {gameState.players.length >= 2 && isAdmin && (
-            <button
-              onClick={startSelection}
-              className="w-full bg-halloween-green hover:bg-teal-500 text-black font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              Начать выбор страхов →
-            </button>
-          )}
-
-          {gameState.players.length >= 2 && !isAdmin && (
-            <p className="text-center text-halloween-green">
-              Ожидание начала игры от администратора 👑
-            </p>
-          )}
-
-          {gameState.players.length < 2 && (
-            <p className="text-center text-halloween-green">
-              Ожидание минимум 2 игроков для начала игры
-            </p>
-          )}
         </div>
       </div>
     </div>

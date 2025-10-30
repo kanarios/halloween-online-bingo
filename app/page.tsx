@@ -27,8 +27,10 @@ function GameContent() {
 export default function Home() {
   return (
     <GameProvider>
-      <ConnectionStatus />
-      <GameContent />
+      <main className="relative">
+        <ConnectionStatus />
+        <GameContent />
+      </main>
     </GameProvider>
   );
 }

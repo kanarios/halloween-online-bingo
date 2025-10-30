@@ -13,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body className="bg-haunted text-halloween-mist">
+        {children}
+      </body>
     </html>
   )
 }

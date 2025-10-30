@@ -17,163 +17,182 @@ export default function PlayingPhase() {
   }, [gameState.drawnFears]);
 
   const handleDrawFear = () => {
-    // Просто отправляем событие на сервер
-    // Вся логика обработки теперь на сервере
     drawFear();
   };
 
-  const currentFearData = gameState.fears.find(f => f.id === currentFear);
+  const currentFearData = gameState.fears.find((f) => f.id === currentFear);
 
   if (!currentPlayer) {
     return <PlayerGate phase="playing" />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-6 text-halloween-orange">
-          🎰 Игра началась! 🎰
-        </h1>
+    <div className="min-h-screen px-6 py-14 md:px-10">
+      <div className="max-w-7xl mx-auto space-y-10">
+        <header className="text-center space-y-3">
+          <span className="uppercase tracking-[0.45em] text-xs text-halloween-green/60">
+            Фаза розыгрыша
+          </span>
+          <h1 className="haunted-heading text-4xl md:text-5xl text-halloween-mist drop-shadow-[0_0_35px_rgba(139,255,87,0.32)]">
+            🎰 Тени начали игру 🎰
+          </h1>
+          <p className="text-base text-halloween-mist/70 max-w-3xl mx-auto">
+            Следите за вытянутыми страхами, отмечайте их в своем билете и не дайте себе сорваться в
+            бездну. Лишний щелчок может разрушить мечту о победе.
+          </p>
+        </header>
 
-        {/* Панель ведущего (только для администратора) */}
+        {/* Панель администратора */}
         {isAdmin && (
-          <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-orange">
-            <h2 className="text-2xl font-bold mb-4 text-halloween-green">
-              🎃 Панель администратора
-            </h2>
-
-            <div className="mb-4">
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-ember/70 bg-haunted-panel p-8 shadow-haunted">
+            <div className="pointer-events-none absolute inset-0 bg-haunted-panel-glare opacity-60 mix-blend-screen" />
+            <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-2">
+                <h2 className="haunted-heading text-3xl text-halloween-green">
+                  🎃 Панель администратора
+                </h2>
+                <p className="text-sm text-halloween-mist/70 max-w-xl">
+                  Ведите ритуал и вытягивайте страхи один за другим. Пусть остальные готовятся к
+                  кошмару.
+                </p>
+              </div>
               <button
                 onClick={handleDrawFear}
-                className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-colors text-xl"
+                className="rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-8 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
               >
                 Вытянуть страх
               </button>
             </div>
-
-          {currentFearData && (
-            <div className="bg-halloween-purple/30 p-6 rounded-lg border-2 border-halloween-orange animate-pulse">
-              <p className="text-center text-3xl font-bold text-halloween-orange mb-2">
-                Страх #{currentFearData.id}
-              </p>
-              <p className="text-center text-xl text-white">
-                {currentFearData.description}
-              </p>
-            </div>
-          )}
-
-          <div className="mt-4 text-center">
-            <p className="text-lg text-halloween-green">
+            {currentFearData && (
+              <div className="relative mt-8 overflow-hidden rounded-3xl border border-halloween-green/50 bg-black/40 p-6 text-center shadow-haunted">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-halloween-green/20 via-transparent to-transparent opacity-70" />
+                <div className="relative space-y-3">
+                  <p className="haunted-heading text-2xl text-halloween-green">
+                    Страх #{currentFearData.id}
+                  </p>
+                  <p className="text-lg text-halloween-mist">
+                    {currentFearData.description}
+                  </p>
+                </div>
+              </div>
+            )}
+            <p className="mt-6 text-center text-sm uppercase tracking-[0.35em] text-halloween-mist/60">
               Вытянуто страхов: {gameState.drawnFears.length} / {gameState.fears.length}
             </p>
           </div>
-          </div>
         )}
 
-        {/* Список вытянутых страхов */}
-        <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-purple">
-          <h3 className="text-xl font-bold mb-3 text-halloween-green">
-            Вытянутые страхи:
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {gameState.drawnFears.map((fearId) => (
-              <span
-                key={fearId}
-                className="bg-halloween-orange text-white px-3 py-1 rounded-full font-bold"
-              >
-                #{fearId}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Статус игроков */}
-        <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-purple">
-          <h2 className="text-xl font-bold mb-4 text-halloween-green">
-            Прогресс игроков:
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {gameState.players.map((player) => (
-              <div
-                key={player.id}
-                className={`p-3 rounded-lg font-semibold ${
-                  player.id === currentPlayer.id
-                    ? 'bg-halloween-orange/30 border-2 border-halloween-orange'
-                    : 'bg-halloween-black/60 border border-halloween-purple'
-                }`}
-              >
-                {player.name}
-                {player.id === currentPlayer.id && ' (Вы)'}
-                {player.id === gameState.adminId && ' 👑'}
-                <br />
-                <span className="text-sm text-halloween-green">
-                  {player.markedNumbers.length}/{player.ticket.length}
-                </span>
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_1.2fr]">
+          <div className="space-y-8">
+            {/* Список вытянутых страхов */}
+            <div className="rounded-3xl border border-halloween-ash/70 bg-black/30 p-6 shadow-haunted backdrop-blur">
+              <h3 className="haunted-heading text-xl text-halloween-green mb-4">
+                Вытянутые страхи
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {gameState.drawnFears.length === 0 && (
+                  <span className="text-sm text-halloween-mist/60">
+                    Пока ничего не вытянули — нарастает напряжение.
+                  </span>
+                )}
+                {gameState.drawnFears.map((fearId) => (
+                  <span
+                    key={fearId}
+                    className="rounded-full border border-halloween-green/60 bg-halloween-black/60 px-4 py-2 text-sm font-semibold text-halloween-green shadow-inner"
+                  >
+                    #{fearId}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Ваш билет */}
-        <div className="bg-black/40 rounded-lg p-6 mb-6 border-2 border-halloween-green">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-halloween-orange">
-              Ваш билет:
-            </h2>
-            <p className="text-sm text-halloween-green">
-              Кликайте на номера, чтобы отметить их
-            </p>
-          </div>
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-4">
-            {currentPlayer.ticket.map((fearId) => {
-              const isMarked = currentPlayer.markedNumbers.includes(fearId);
-              const fear = gameState.fears.find(f => f.id === fearId);
-
-              return (
-                <button
-                  key={fearId}
-                  onClick={() => markFearOnTicket(currentPlayer.id, fearId)}
-                  className={`p-4 rounded-lg text-center font-bold transition-all cursor-pointer hover:scale-105 ${
-                    isMarked
-                      ? 'bg-halloween-green text-black scale-95'
-                      : 'bg-halloween-black/60 text-white border-2 border-halloween-purple hover:border-halloween-green'
-                  }`}
-                  title={fear?.description}
-                >
-                  #{fearId}
-                  {isMarked && ' ✓'}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mb-4 text-center">
-            <p className="text-lg text-halloween-green">
-              Закрыто: {currentPlayer.markedNumbers.length} / {currentPlayer.ticket.length}
-            </p>
-          </div>
-
-          {/* Кнопка проверки победителя */}
-          {currentPlayer.markedNumbers.length === currentPlayer.ticket.length && (
-            <button
-              onClick={checkWinner}
-              className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors animate-bounce"
-            >
-              Проверить победителя! 🎉
-            </button>
-          )}
-
-          {currentPlayer.markedNumbers.length < currentPlayer.ticket.length && (
-            <div className="text-center p-3 bg-halloween-purple/20 rounded">
-              <p className="text-sm text-halloween-green">
-                💡 Следите за вытянутыми страхами и отмечайте их в своем билете
-              </p>
-              <p className="text-xs text-halloween-orange mt-1">
-                Внимание! Если отметите лишний страх или пропустите вытянутый - не сможете победить
-              </p>
             </div>
-          )}
+
+            {/* Статус игроков */}
+            <div className="rounded-3xl border border-halloween-ash/70 bg-black/30 p-6 shadow-haunted backdrop-blur">
+              <h2 className="haunted-heading text-xl text-halloween-green mb-4">
+                Прогресс игроков
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {gameState.players.map((player) => (
+                  <div
+                    key={player.id}
+                    className={`rounded-2xl border px-4 py-3 text-sm font-semibold tracking-wide shadow-inner transition ${
+                      player.id === currentPlayer.id
+                        ? 'border-halloween-green/60 bg-halloween-black/60 text-halloween-green'
+                        : 'border-halloween-ash/60 bg-halloween-black/50 text-halloween-mist'
+                    }`}
+                  >
+                    <div>
+                      {player.name}
+                      {player.id === currentPlayer.id && ' (Вы)'}
+                      {player.id === gameState.adminId && ' 👑'}
+                    </div>
+                    <div className="mt-2 text-xs uppercase tracking-[0.3em] text-halloween-mist/70">
+                      {player.markedNumbers.length}/{player.ticket.length}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Ваш билет */}
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-green/50 bg-haunted-panel p-8 shadow-haunted">
+            <div className="pointer-events-none absolute inset-0 bg-haunted-panel-glare opacity-60 mix-blend-screen" />
+            <div className="relative space-y-6">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="haunted-heading text-3xl text-halloween-green">
+                    Ваш билет
+                  </h2>
+                  <p className="text-sm text-halloween-mist/70">
+                    Кликайте по страхам, которые уже прозвучали во время розыгрыша.
+                  </p>
+                </div>
+                <p className="text-sm uppercase tracking-[0.35em] text-halloween-mist/60">
+                  Закрыто: {currentPlayer.markedNumbers.length} / {currentPlayer.ticket.length}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                {currentPlayer.ticket.map((fearId) => {
+                  const isMarked = currentPlayer.markedNumbers.includes(fearId);
+                  const fear = gameState.fears.find((f) => f.id === fearId);
+
+                  return (
+                    <button
+                      key={fearId}
+                      onClick={() => markFearOnTicket(currentPlayer.id, fearId)}
+                      className={`relative overflow-hidden rounded-2xl border px-4 py-4 text-center text-sm font-bold transition-all hover:scale-[1.03] ${
+                        isMarked
+                          ? 'border-halloween-green/70 bg-halloween-green/20 text-halloween-green shadow-[0_0_25px_rgba(139,255,87,0.45)]'
+                          : 'border-halloween-ash/60 bg-halloween-black/60 text-halloween-mist/80 hover:border-halloween-green/50 hover:text-halloween-mist'
+                      }`}
+                      title={fear?.description}
+                    >
+                      #{fearId}
+                      {isMarked && <span className="ml-2 text-halloween-green">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {currentPlayer.markedNumbers.length === currentPlayer.ticket.length ? (
+                <button
+                  onClick={checkWinner}
+                  className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
+                >
+                  Проверить победителя! 🎉
+                </button>
+              ) : (
+                <div className="rounded-2xl border border-halloween-ash/60 bg-halloween-black/50 p-4 text-center text-sm text-halloween-mist/70 shadow-inner">
+                  💡 Будьте осторожны: отметьте только те страхи, что уже были вытянуты.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

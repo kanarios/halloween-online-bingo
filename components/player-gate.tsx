@@ -56,95 +56,121 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-halloween-purple via-halloween-black to-halloween-orange p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-center mb-4 text-halloween-orange">
-          🎃 Страшное Бинго 🎃
-        </h1>
-        <p className="text-center text-xl mb-8 text-halloween-green">
-          Хэллоуинская игра со страхами тестировщиков
-        </p>
-
-        <div className="bg-black/40 rounded-lg p-6 mb-8 border-2 border-halloween-orange">
-          <h2 className="text-2xl font-bold mb-4 text-halloween-orange">
-            {copy.title}
-          </h2>
-          <p className="text-lg mb-6 text-white">
+    <div className="min-h-screen px-6 py-14 md:px-10">
+      <div className="max-w-6xl mx-auto space-y-12">
+        <div className="text-center space-y-4">
+          <span className="uppercase tracking-[0.5em] text-xs text-halloween-green/60">
+            Врата кошмара
+          </span>
+          <h1 className="haunted-heading text-5xl md:text-6xl text-halloween-mist drop-shadow-[0_0_30px_rgba(139,255,87,0.35)]">
+            🎃 Страшное Бинго 🎃
+          </h1>
+          <p className="text-lg text-halloween-mist/80 max-w-3xl mx-auto">
             {copy.description}
           </p>
-
-          <form onSubmit={handleSubmit} className="mb-6">
-            <div className="mb-4">
-              <label className="block text-lg mb-2 text-halloween-green">
-                Ваше имя
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="w-full px-4 py-2 bg-halloween-black border-2 border-halloween-purple rounded text-white focus:outline-none focus:border-halloween-orange"
-                placeholder="Введите ваше имя"
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-lg mb-2 text-halloween-green">
-                Ваша ставка ({MIN_BET}-{MAX_BET} монет)
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  type="range"
-                  min={MIN_BET}
-                  max={MAX_BET}
-                  value={bet}
-                  onChange={(event) => setBet(Number(event.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-2xl font-bold text-halloween-orange w-16 text-center">
-                  {bet}
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-halloween-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              Присоединиться к игре
-            </button>
-          </form>
-
-          <div className="bg-halloween-purple/30 p-4 rounded border border-halloween-purple">
-            <p className="text-sm text-halloween-green">
-              {copy.note}
-            </p>
-          </div>
         </div>
 
-        {gameState.players.length > 0 && (
-          <div className="bg-black/40 rounded-lg p-6 border-2 border-halloween-purple">
-            <p className="text-center text-halloween-green mb-3">
-              Уже зарегистрировано игроков: {gameState.players.length}
-            </p>
-            <div className="space-y-2">
-              {gameState.players.map((player) => (
-                <div
-                  key={player.id}
-                  className="flex justify-between items-center p-3 rounded bg-halloween-black/60 border border-halloween-purple"
-                >
-                  <span className="font-semibold text-white">
-                    {player.name}
-                    {player.id === gameState.adminId && ' 👑'}
-                  </span>
-                  <span className="text-halloween-orange font-bold">
-                    {player.bet} монет
-                  </span>
+        <div className="grid gap-8 lg:grid-cols-[1.65fr_1fr]">
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-ember/70 shadow-haunted bg-haunted-panel p-8 md:p-10">
+            <div className="pointer-events-none absolute inset-0 opacity-60 mix-blend-screen bg-haunted-panel-glare" />
+            <div className="relative space-y-6">
+              <div className="space-y-2">
+                <h2 className="haunted-heading text-3xl text-halloween-green drop-shadow-[0_0_15px_rgba(139,255,87,0.3)]">
+                  {copy.title}
+                </h2>
+                <p className="text-base text-halloween-mist/70">
+                  Оставьте своё имя в книге теней, заплатите дань и вступите в ритуал.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="block text-sm uppercase tracking-[0.35em] text-halloween-green/70">
+                    Ваше имя
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    className="w-full rounded-xl border border-halloween-ash/60 bg-halloween-black/70 px-4 py-3 text-base text-halloween-mist placeholder:text-halloween-mist/40 focus:border-halloween-green focus:outline-none focus:ring-2 focus:ring-halloween-green/30"
+                    placeholder="Введите ваше имя"
+                    required
+                  />
                 </div>
-              ))}
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm uppercase tracking-[0.35em] text-halloween-green/70">
+                    <span>Ваша ставка</span>
+                    <span>
+                      {MIN_BET}-{MAX_BET} монет
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-5">
+                    <input
+                      type="range"
+                      min={MIN_BET}
+                      max={MAX_BET}
+                      value={bet}
+                      onChange={(event) => setBet(Number(event.target.value))}
+                      className="flex-1 accent-halloween-green"
+                    />
+                    <span className="inline-flex h-14 w-20 items-center justify-center rounded-xl border border-halloween-green/40 bg-halloween-black/60 text-2xl font-semibold text-halloween-green shadow-haunted">
+                      {bet}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
+                >
+                  Присоединиться к ритуалу
+                </button>
+              </form>
+
+              {copy.note && (
+                <div className="rounded-2xl border border-halloween-green/20 bg-black/30 p-5 text-sm text-halloween-mist/70 shadow-inner">
+                  {copy.note}
+                </div>
+              )}
             </div>
           </div>
-        )}
+
+          <div className="relative overflow-hidden rounded-3xl border border-halloween-ash/60 bg-black/30 p-8 shadow-haunted backdrop-blur">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40 opacity-70" />
+            <div className="relative space-y-4">
+              <h3 className="haunted-heading text-xl text-halloween-green">
+                Круг призванных
+              </h3>
+              <p className="text-sm text-halloween-mist/60">
+                Зарегистрировано: {gameState.players.length} душ
+              </p>
+
+              <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                {gameState.players.length === 0 && (
+                  <div className="rounded-lg border border-dashed border-halloween-ash/60 px-4 py-6 text-center text-sm text-halloween-mist/50">
+                    Пока здесь пусто. Будьте первым, кто заглянет в бездну.
+                  </div>
+                )}
+
+                {gameState.players.map((player) => (
+                  <div
+                    key={player.id}
+                    className="flex items-center justify-between rounded-2xl border border-halloween-ash/70 bg-halloween-black/70 px-4 py-3 text-sm text-halloween-mist shadow-inner"
+                  >
+                    <span className="font-semibold tracking-wide">
+                      {player.name}
+                      {player.id === gameState.adminId && ' 👑'}
+                    </span>
+                    <span className="text-halloween-green font-semibold">
+                      {player.bet} монет
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
