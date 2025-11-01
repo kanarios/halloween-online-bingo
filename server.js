@@ -54,6 +54,8 @@ app.prepare().then(() => {
         bet: data.bet,
         ticket: [],
         markedNumbers: [],
+        checkAttempts: 0,
+        isDisqualified: false,
       };
       gameState.players.push(newPlayer);
       gameState.totalPrize += data.bet;
@@ -73,8 +75,11 @@ app.prepare().then(() => {
 
     // Обновление билета игрока
     socket.on('updatePlayerTicket', (data) => {
+      // Убираем дубликаты из билета
+      const uniqueFearIds = [...new Set(data.fearIds)];
+
       gameState.players = gameState.players.map(p =>
-        p.id === data.playerId ? { ...p, ticket: data.fearIds } : p
+        p.id === data.playerId ? { ...p, ticket: uniqueFearIds } : p
       );
       io.emit('gameState', gameState);
     });
@@ -119,6 +124,11 @@ app.prepare().then(() => {
 
       gameState.players = gameState.players.map(p => {
         if (p.id === playerId) {
+          // Не позволяем исключённым игрокам отмечать страхи
+          if (p.isDisqualified) {
+            return p;
+          }
+
           // Переключаем отметку (toggle)
           if (p.markedNumbers.includes(fearId)) {
             // Если уже отмечен - снимаем отметку
@@ -135,27 +145,74 @@ app.prepare().then(() => {
     });
 
     // Проверка победителя (вызывается игроком)
-    socket.on('checkWinner', () => {
-      // Проверяем всех игроков
-      const winner = gameState.players.find(p => {
-        if (p.ticket.length === 0) return false;
+    socket.on('checkWinner', (data) => {
+      const { playerId } = data;
+
+      // Находим игрока, который вызвал проверку
+      const player = gameState.players.find(p => p.id === playerId);
+
+      if (!player || player.isDisqualified) {
+        return;
+      }
+
+      // Проверка победы для этого игрока
+      const isWinner = (() => {
+        if (player.ticket.length === 0) return false;
 
         // Игрок должен отметить ВСЕ вытянутые страхи из своего билета
-        const drawnFearsInTicket = p.ticket.filter(fearId => gameState.drawnFears.includes(fearId));
-        const allDrawnMarked = drawnFearsInTicket.every(fearId => p.markedNumbers.includes(fearId));
+        const drawnFearsInTicket = player.ticket.filter(fearId => gameState.drawnFears.includes(fearId));
+        const allDrawnMarked = drawnFearsInTicket.every(fearId => player.markedNumbers.includes(fearId));
 
         // Игрок НЕ должен отметить лишние страхи (которых нет в вытянутых)
-        const noExtraMarks = p.markedNumbers.every(fearId => gameState.drawnFears.includes(fearId));
+        const noExtraMarks = player.markedNumbers.every(fearId => gameState.drawnFears.includes(fearId));
 
         // Игрок должен закрыть ВСЕ страхи в своем билете
-        const allTicketMarked = p.ticket.every(fearId => p.markedNumbers.includes(fearId));
+        const allTicketMarked = player.ticket.every(fearId => player.markedNumbers.includes(fearId));
 
         return allDrawnMarked && noExtraMarks && allTicketMarked;
-      });
+      })();
 
-      if (winner && !gameState.winner) {
-        gameState.winner = winner;
+      if (isWinner && !gameState.winner) {
+        // Игрок победил!
+        gameState.winner = player;
         gameState.phase = 'finished';
+        io.emit('gameState', gameState);
+      } else if (!isWinner) {
+        // Игрок не победил - увеличиваем счётчик попыток
+        gameState.players = gameState.players.map(p => {
+          if (p.id === playerId) {
+            const newAttempts = p.checkAttempts + 1;
+
+            if (newAttempts >= 3) {
+              // Третья неудачная попытка - исключаем игрока
+              socket.emit('checkResult', {
+                success: false,
+                warning: 'disqualified',
+                message: '☠️ Вы исключены из игры за многократные неверные попытки проверки. Вы можете наблюдать за игрой, но не можете в ней участвовать.'
+              });
+              return { ...p, checkAttempts: newAttempts, isDisqualified: true };
+            } else if (newAttempts === 2) {
+              // Вторая попытка - строгое предупреждение
+              socket.emit('checkResult', {
+                success: false,
+                warning: 'final',
+                message: '⚠️ Последнее предупреждение! Ещё одна неверная попытка и вы будете исключены из игры. Проверьте внимательнее!'
+              });
+              return { ...p, checkAttempts: newAttempts };
+            } else {
+              // Первая попытка - мягкое предупреждение
+              socket.emit('checkResult', {
+                success: false,
+                warning: 'first',
+                message: '⚠️ Вы ещё не победили. Проверьте свой билет внимательнее. У вас осталось 2 попытки.'
+              });
+              return { ...p, checkAttempts: newAttempts };
+            }
+          }
+          return p;
+        });
+
+        // Отправляем обновлённое состояние всем
         io.emit('gameState', gameState);
       }
     });

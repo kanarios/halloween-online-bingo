@@ -10,6 +10,8 @@ export interface Player {
   bet: number;
   ticket: number[];
   markedNumbers: number[];
+  checkAttempts: number; // Количество попыток проверки победителя
+  isDisqualified: boolean; // Исключён ли игрок за читерство
 }
 
 export interface GameState {

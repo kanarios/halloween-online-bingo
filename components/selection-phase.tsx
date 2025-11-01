@@ -30,7 +30,11 @@ export default function SelectionPhase() {
 
   const saveTicket = () => {
     if (currentPlayer && selectedFears.length === TICKET_SIZE) {
-      updatePlayerTicket(currentPlayer.id, selectedFears);
+      // Убираем возможные дубликаты перед сохранением
+      const uniqueFears = [...new Set(selectedFears)];
+      if (uniqueFears.length === TICKET_SIZE) {
+        updatePlayerTicket(currentPlayer.id, uniqueFears);
+      }
     }
   };
 
@@ -156,7 +160,7 @@ export default function SelectionPhase() {
               Ожидайте других участников. Не теряйте концентрацию — помните, что ставки высоки.
             </p>
             <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-              {currentPlayer.ticket.map((fearId) => {
+              {[...new Set(currentPlayer.ticket)].map((fearId) => {
                 const fear = gameState.fears.find((f) => f.id === fearId);
                 return (
                   <div

@@ -2,6 +2,7 @@
 
 import { useGame } from '@/lib/game-context';
 import PlayerGate from '@/components/player-gate';
+import { pluralizeSpasibki } from '@/lib/utils';
 
 export default function BettingPhase() {
   const { gameState, currentPlayer, startSelection, isAdmin } = useGame();
@@ -42,7 +43,7 @@ export default function BettingPhase() {
                 <p>
                   Ставка:{' '}
                   <span className="text-halloween-green font-semibold">
-                    {currentPlayer.bet} монет
+                    {currentPlayer.bet} {pluralizeSpasibki(currentPlayer.bet)}
                   </span>
                 </p>
               </div>
@@ -66,7 +67,7 @@ export default function BettingPhase() {
                   <span className="text-halloween-green font-semibold text-base">
                     {gameState.totalPrize}
                   </span>{' '}
-                  монет
+                  {pluralizeSpasibki(gameState.totalPrize)}
                 </p>
               </div>
 
@@ -86,7 +87,7 @@ export default function BettingPhase() {
                       {player.id === gameState.adminId && ' 👑'}
                     </span>
                     <span className="text-halloween-green font-semibold">
-                      {player.bet} монет
+                      {player.bet} {pluralizeSpasibki(player.bet)}
                     </span>
                   </div>
                 ))}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useGame } from '@/lib/game-context';
+import { pluralizeSpasibki } from '@/lib/utils';
 
 export default function FinishedPhase() {
   const { gameState, resetGame, isAdmin } = useGame();
@@ -37,13 +38,13 @@ export default function FinishedPhase() {
               </h3>
               <ul className="space-y-3 text-sm text-halloween-mist/80">
                 <li>
-                  <span className="text-halloween-green">Приз:</span> {gameState.totalPrize} монет
+                  <span className="text-halloween-green">Приз:</span> {gameState.totalPrize} {pluralizeSpasibki(gameState.totalPrize)}
                 </li>
                 <li>
-                  <span className="text-halloween-green">Ставка победителя:</span> {gameState.winner.bet} монет
+                  <span className="text-halloween-green">Ставка победителя:</span> {gameState.winner.bet} {pluralizeSpasibki(gameState.winner.bet)}
                 </li>
                 <li>
-                  <span className="text-halloween-green">Прибыль:</span> {gameState.totalPrize - gameState.winner.bet} монет
+                  <span className="text-halloween-green">Прибыль:</span> {gameState.totalPrize - gameState.winner.bet} {pluralizeSpasibki(gameState.totalPrize - gameState.winner.bet)}
                 </li>
               </ul>
             </div>
@@ -88,7 +89,7 @@ export default function FinishedPhase() {
                       {player.name} {player.id === gameState.winner?.id && '👑'}
                     </span>
                     <span className="text-halloween-green">
-                      Ставка: {player.bet} монет
+                      Ставка: {player.bet} {pluralizeSpasibki(player.bet)}
                     </span>
                   </div>
                   <div className="mt-2 text-xs uppercase tracking-[0.3em] text-halloween-mist/70">

@@ -3,6 +3,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { useGame } from '@/lib/game-context';
 import { GameState, MAX_BET, MIN_BET } from '@/types/game';
+import { pluralizeSpasibki } from '@/lib/utils';
 
 interface PlayerGateProps {
   phase: GameState['phase'];
@@ -102,7 +103,7 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
                   <div className="flex items-center justify-between text-sm uppercase tracking-[0.35em] text-halloween-green/70">
                     <span>Ваша ставка</span>
                     <span>
-                      {MIN_BET}-{MAX_BET} монет
+                      {MIN_BET}-{MAX_BET} спасибок
                     </span>
                   </div>
                   <div className="flex items-center gap-5">
@@ -163,7 +164,7 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
                       {player.id === gameState.adminId && ' 👑'}
                     </span>
                     <span className="text-halloween-green font-semibold">
-                      {player.bet} монет
+                      {player.bet} {pluralizeSpasibki(player.bet)}
                     </span>
                   </div>
                 ))}

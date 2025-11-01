@@ -5,6 +5,12 @@ import { io, Socket } from 'socket.io-client';
 import { GameState, Player, TICKET_SIZE } from '@/types/game';
 import { FEARS_LIST } from '@/lib/fears-data';
 
+interface CheckResultData {
+  success: boolean;
+  warning?: 'first' | 'final' | 'disqualified';
+  message?: string;
+}
+
 interface GameContextType {
   gameState: GameState;
   currentPlayer: Player | null;
@@ -12,12 +18,13 @@ interface GameContextType {
   updatePlayerTicket: (playerId: string, fearIds: number[]) => void;
   drawFear: () => void;
   markFearOnTicket: (playerId: string, fearId: number) => void;
-  checkWinner: () => Player | null;
+  checkWinner: () => void;
   resetGame: () => void;
   startSelection: () => void;
   startPlaying: () => void;
   isConnected: boolean;
   isAdmin: boolean;
+  checkResult: CheckResultData | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -38,6 +45,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
   const [isConnected, setIsConnected] = useState(false);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
+  const [checkResult, setCheckResult] = useState<CheckResultData | null>(null);
 
   // Загружаем playerId из localStorage при инициализации
   useEffect(() => {
@@ -84,6 +92,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('currentPlayerId', data.playerId);
     });
 
+    // Получаем результат проверки победителя
+    socket.on('checkResult', (data: CheckResultData) => {
+      console.log('Check result:', data);
+      setCheckResult(data);
+      // Автоматически очищаем результат через 8 секунд
+      setTimeout(() => {
+        setCheckResult(null);
+      }, 8000);
+    });
+
     return () => {
       socket?.disconnect();
     };
@@ -114,11 +132,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     socket?.emit('markFear', { playerId, fearId });
   }, []);
 
-  const checkWinner = useCallback((): Player | null => {
+  const checkWinner = useCallback(() => {
     // Отправляем запрос на проверку победителя на сервер
-    socket?.emit('checkWinner');
-    return gameState.winner;
-  }, [gameState.winner]);
+    if (currentPlayerId) {
+      socket?.emit('checkWinner', { playerId: currentPlayerId });
+    }
+  }, [currentPlayerId]);
 
   const resetGame = useCallback(() => {
     socket?.emit('resetGame', FEARS_LIST);
@@ -150,6 +169,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         startPlaying,
         isConnected,
         isAdmin,
+        checkResult,
       }}
     >
       {children}
