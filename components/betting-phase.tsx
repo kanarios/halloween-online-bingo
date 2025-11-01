@@ -60,15 +60,15 @@ export default function BettingPhase() {
             <div className="relative space-y-6">
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 className="haunted-heading text-3xl text-halloween-green">
-                  👥 Лобби игроков
+                  Круг <p>
+                  призванных</p>
                 </h2>
-                <p className="text-sm uppercase tracking-[0.3em] text-halloween-mist/60">
-                  Общий банк:{' '}
-                  <span className="text-halloween-green font-semibold text-base">
-                    {gameState.totalPrize}
-                  </span>{' '}
-                  {pluralizeSpasibki(gameState.totalPrize)}
-                </p>
+                <div className="text-sm uppercase tracking-[0.3em] text-halloween-mist/60 text-right">
+                  <div>Жертвенный котёл:</div>
+                  <div className="text-halloween-green font-semibold text-base">
+                    {gameState.totalPrize} {pluralizeSpasibki(gameState.totalPrize)}
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
@@ -95,8 +95,8 @@ export default function BettingPhase() {
 
               <div className="rounded-2xl border border-halloween-ash/60 bg-halloween-black/60 p-5 text-center text-sm text-halloween-mist/70 shadow-inner">
                 {gameState.players.length < 2
-                  ? 'Нужен минимум ещё один игрок, чтобы запустить следующий ритуал.'
-                  : 'Все готовы? Когда почувствуете зов, запускайте выбор страхов.'}
+                  ? 'Круг требует минимум ещё одну душу, чтобы запустить следующий ритуал.'
+                  : 'Души собрались? Когда почувствуете зов тьмы, открывайте книгу страхов.'}
               </div>
 
               {/* Кнопка начала игры (только администратор) */}
@@ -105,13 +105,13 @@ export default function BettingPhase() {
                   onClick={startSelection}
                   className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
                 >
-                  Начать выбор страхов →
+                  Открыть книгу страхов →
                 </button>
               )}
 
               {gameState.players.length >= 2 && !isAdmin && (
                 <p className="text-center text-sm uppercase tracking-[0.3em] text-halloween-green/80">
-                  Ожидание начала игры от администратора 👑
+                  Ожидание призыва верховного жреца 👑
                 </p>
               )}
 

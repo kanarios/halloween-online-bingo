@@ -15,64 +15,76 @@ export default function FinishedPhase() {
         <div className="relative space-y-8">
           <header className="space-y-3">
             <h1 className="haunted-heading text-5xl text-halloween-green drop-shadow-[0_0_45px_rgba(139,255,87,0.45)]">
-              🎉 ПОБЕДА! 🎉
+              ☠️ ТРИУМФ ТЬМЫ! ☠️
             </h1>
             <p className="text-lg text-halloween-mist/70">
-              Ритуал завершен. Победитель преодолел все страхи и забрал приз.
+              Тёмный обряд завершён. Победитель прошёл сквозь бездну и вырвал награду из когтей проклятия.
             </p>
           </header>
 
           <section className="rounded-3xl border border-halloween-green/60 bg-black/30 p-8 shadow-inner">
             <p className="haunted-heading text-3xl text-halloween-green mb-4">
-              Поздравляем, {gameState.winner.name}!
+              Склоняемся перед {gameState.winner.name}!
             </p>
             <p className="text-base text-halloween-mist/70">
-              Вы закрыли каждый из своих страхов и не поддались лишним искушениям.
+              Вы одолели все свои страхи и не поддались ложным видениям.
             </p>
           </section>
 
-          <div className="grid md:grid-cols-2 gap-6 text-left">
-            <div className="rounded-3xl border border-halloween-green/50 bg-black/30 p-6 shadow-haunted">
-              <h3 className="haunted-heading text-xl text-halloween-green mb-3">
-                Трофей
-              </h3>
-              <ul className="space-y-3 text-sm text-halloween-mist/80">
-                <li>
-                  <span className="text-halloween-green">Приз:</span> {gameState.totalPrize} {pluralizeSpasibki(gameState.totalPrize)}
-                </li>
-                <li>
-                  <span className="text-halloween-green">Ставка победителя:</span> {gameState.winner.bet} {pluralizeSpasibki(gameState.winner.bet)}
-                </li>
-                <li>
-                  <span className="text-halloween-green">Прибыль:</span> {gameState.totalPrize - gameState.winner.bet} {pluralizeSpasibki(gameState.totalPrize - gameState.winner.bet)}
-                </li>
-              </ul>
-            </div>
+          <div className="rounded-3xl border border-halloween-green/50 bg-black/30 p-6 shadow-haunted text-left">
+            <h3 className="haunted-heading text-xl text-halloween-green mb-3">
+              Проклятое богатство
+            </h3>
+            <ul className="space-y-3 text-sm text-halloween-mist/80">
+              <li>
+                <span className="text-halloween-green">Награда тьмы:</span> {gameState.totalPrize} {pluralizeSpasibki(gameState.totalPrize)}
+              </li>
+              <li>
+                <span className="text-halloween-green">Жертва победителя:</span> {gameState.winner.bet} {pluralizeSpasibki(gameState.winner.bet)}
+              </li>
+              <li>
+                <span className="text-halloween-green">Проклятый выигрыш:</span> {gameState.totalPrize - gameState.winner.bet} {pluralizeSpasibki(gameState.totalPrize - gameState.winner.bet)}
+              </li>
+            </ul>
+          </div>
 
-            <div className="rounded-3xl border border-halloween-green/50 bg-black/30 p-6 shadow-haunted">
-              <h3 className="haunted-heading text-xl text-halloween-green mb-3">
-                Билет победителя
-              </h3>
-              <div className="grid grid-cols-3 gap-3">
-                {gameState.winner.ticket.map((fearId) => {
-                  const fear = gameState.fears.find((f) => f.id === fearId);
-                  return (
-                    <div
-                      key={fearId}
-                      className="rounded-2xl border border-halloween-green/70 bg-halloween-black/50 px-3 py-3 text-center text-sm font-semibold text-halloween-green shadow-inner"
-                      title={fear?.description}
-                    >
-                      #{fearId} ✓
+          <div className="rounded-3xl border border-halloween-green/50 bg-black/30 p-6 shadow-haunted text-left">
+            <h3 className="haunted-heading text-xl text-halloween-green mb-4">
+              Страх победителя
+            </h3>
+            <p className="text-xs uppercase tracking-[0.3em] text-halloween-mist/60 mb-4">
+              Вот чего боится {gameState.winner.name}:
+            </p>
+            <div className="space-y-3">
+              {gameState.winner.ticket.map((fearId, index) => {
+                const fear = gameState.fears.find((f) => f.id === fearId);
+                return (
+                  <div
+                    key={fearId}
+                    className="rounded-2xl border border-halloween-green/40 bg-halloween-black/40 px-4 py-3 shadow-inner transition hover:border-halloween-green/60 hover:bg-halloween-black/50"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-halloween-green/20 text-xs font-bold text-halloween-green">
+                        {index + 1}
+                      </span>
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-halloween-green/80 mb-1">
+                          Страх #{fearId}
+                        </p>
+                        <p className="text-sm leading-relaxed text-halloween-mist/90">
+                          {fear?.description || `Описание не найдено`}
+                        </p>
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <section className="rounded-3xl border border-halloween-ash/70 bg-black/30 p-6 shadow-haunted text-left">
             <h3 className="haunted-heading text-xl text-halloween-green mb-4">
-              Все участники
+              Павшие души
             </h3>
             <div className="space-y-3">
               {gameState.players.map((player) => (
@@ -105,11 +117,11 @@ export default function FinishedPhase() {
               onClick={resetGame}
               className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
             >
-              Начать новую игру
+              Начать новый ритуал
             </button>
           ) : (
             <p className="text-sm uppercase tracking-[0.35em] text-halloween-mist/60">
-              Ожидание новой игры от администратора 👑
+              Ожидание нового обряда от верховного жреца 👑
             </p>
           )}
         </div>

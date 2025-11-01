@@ -11,24 +11,24 @@ interface PlayerGateProps {
 
 const PHASE_COPY: Record<PlayerGateProps['phase'], { title: string; description: string; note?: string }> = {
   betting: {
-    title: '💰 Регистрация',
-    description: 'Зарегистрируйтесь, чтобы присоединиться к игре.',
-    note: 'После регистрации вы попадете в общее лобби и увидите других игроков.',
+    title: '💰 Посвящение',
+    description: 'Оставьте своё имя и фамилию чтобы присоединиться к ритуалу.',
+    note: 'После посвящения вы попадёте в общее лобби и увидите другие падшие души.',
   },
   selection: {
     title: '👻 Присоединиться к отбору страхов',
-    description: 'Введите имя и ставку, чтобы выбрать страхи для своего билета.',
+    description: 'Введите имя, фамилию и ставку, чтобы выбрать страхи для своего билета.',
     note: 'После регистрации сразу откроется выбор страхов. Не забудьте выбрать все 15!',
   },
   playing: {
-    title: '🎲 Игра уже идет',
+    title: '🎲 Ритуал уже начался',
     description: 'Вы все еще можете зарегистрироваться, чтобы наблюдать и играть со своей карточкой.',
     note: 'После регистрации отметьте страхи, которые уже были вытянуты, чтобы догнать остальных.',
   },
   finished: {
-    title: '🎉 Игра завершена',
-    description: 'Подождите нового запуска игры от администратора.',
-    note: 'Вы можете зарегистрироваться заранее, чтобы войти в следующую игру.',
+    title: '🎉 Ритуал завершён',
+    description: 'Подождите нового ритуала от верховного жреца.',
+    note: 'Вы можете пройти посвящение заранее, чтобы войти в следующую игру.',
   },
 };
 
@@ -61,7 +61,7 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <span className="uppercase tracking-[0.5em] text-xs text-halloween-green/60">
-            Врата кошмара
+            Врата страха тестировщиков 2ГИС
           </span>
           <h1 className="haunted-heading text-5xl md:text-6xl text-halloween-mist drop-shadow-[0_0_30px_rgba(139,255,87,0.35)]">
             🎃 Страшное Бинго 🎃
@@ -87,14 +87,14 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <label className="block text-sm uppercase tracking-[0.35em] text-halloween-green/70">
-                    Ваше имя
+                    Ваше имя и фамилия
                   </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     className="w-full rounded-xl border border-halloween-ash/60 bg-halloween-black/70 px-4 py-3 text-base text-halloween-mist placeholder:text-halloween-mist/40 focus:border-halloween-green focus:outline-none focus:ring-2 focus:ring-halloween-green/30"
-                    placeholder="Введите ваше имя"
+                    placeholder="Введите ваше имя и фамилию"
                     required
                   />
                 </div>
@@ -144,7 +144,7 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
                 Круг призванных
               </h3>
               <p className="text-sm text-halloween-mist/60">
-                Зарегистрировано: {gameState.players.length} душ
+                Посвящено: {gameState.players.length} душ
               </p>
 
               <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">

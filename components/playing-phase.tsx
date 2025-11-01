@@ -43,14 +43,14 @@ export default function PlayingPhase() {
       <div className="max-w-7xl mx-auto space-y-10">
         <header className="text-center space-y-3">
           <span className="uppercase tracking-[0.45em] text-xs text-halloween-green/60">
-            Фаза розыгрыша
+            Ритуал проклятия
           </span>
           <h1 className="haunted-heading text-4xl md:text-5xl text-halloween-mist drop-shadow-[0_0_35px_rgba(139,255,87,0.32)]">
-            🎰 Тени начали игру 🎰
+            🎰 Врата бездны открыты 🎰
           </h1>
           <p className="text-base text-halloween-mist/70 max-w-3xl mx-auto">
-            Следите за вытянутыми страхами, отмечайте их в своем билете и не дайте себе сорваться в
-            бездну. Лишний щелчок может разрушить мечту о победе.
+            Следите за призванными страхами, отмечайте их в своём обете и не дайте себе пасть во
+            тьму. Лишняя отметка может обречь душу на вечные муки.
           </p>
         </header>
 
@@ -61,18 +61,18 @@ export default function PlayingPhase() {
             <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <h2 className="haunted-heading text-3xl text-halloween-green">
-                  🎃 Панель администратора
+                  🎃 Алтарь верховного жреца
                 </h2>
                 <p className="text-sm text-halloween-mist/70 max-w-xl">
-                  Ведите ритуал и вытягивайте страхи один за другим. Пусть остальные готовятся к
-                  кошмару.
+                  Ведите тёмный обряд и призывайте страхи один за другим. Пусть души трепещут в
+                  ожидании своей участи.
                 </p>
               </div>
               <button
                 onClick={handleDrawFear}
                 className="rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-8 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
               >
-                Вытянуть страх
+                Призвать страх
               </button>
             </div>
           </div>
@@ -84,7 +84,7 @@ export default function PlayingPhase() {
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-halloween-green/20 via-transparent to-transparent opacity-70" />
             <div className="relative space-y-3">
               <p className="text-sm uppercase tracking-[0.35em] text-halloween-green/60">
-                Последний вытянутый страх
+                Последний призванный страх
               </p>
               <p className="haunted-heading text-3xl md:text-4xl text-halloween-green drop-shadow-[0_0_25px_rgba(139,255,87,0.4)]">
                 Страх #{currentFearData.id}
@@ -93,7 +93,7 @@ export default function PlayingPhase() {
                 {currentFearData.description}
               </p>
               <p className="text-sm uppercase tracking-[0.35em] text-halloween-mist/60">
-                Вытянуто: {gameState.drawnFears.length} / {gameState.fears.length}
+                Призвано: {gameState.drawnFears.length} / {gameState.fears.length}
               </p>
             </div>
           </div>
@@ -104,12 +104,12 @@ export default function PlayingPhase() {
             {/* Список вытянутых страхов (последние 2) */}
             <div className="rounded-3xl border border-halloween-ash/70 bg-black/30 p-6 shadow-haunted backdrop-blur">
               <h3 className="haunted-heading text-xl text-halloween-green mb-4">
-                Последние вытянутые страхи
+                Последние призванные страхи
               </h3>
               <div className="flex flex-wrap gap-2">
                 {gameState.drawnFears.length === 0 && (
                   <span className="text-sm text-halloween-mist/60">
-                    Пока ничего не вытянули — нарастает напряжение.
+                    Ни один страх пока не призван — мрак сгущается.
                   </span>
                 )}
                 {gameState.drawnFears.slice(-2).map((fearId) => (
@@ -126,7 +126,7 @@ export default function PlayingPhase() {
             {/* Топ участников */}
             <div className="rounded-3xl border border-halloween-ash/70 bg-black/30 p-6 shadow-haunted backdrop-blur">
               <h2 className="haunted-heading text-xl text-halloween-green mb-4">
-                🏆 Топ участников
+                👻 Проклятые души
               </h2>
               <div className="space-y-2">
                 {sortedPlayers.map((player, index) => {
@@ -189,17 +189,20 @@ export default function PlayingPhase() {
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="haunted-heading text-3xl text-halloween-green">
-                    Ваш билет {currentPlayer.isDisqualified && '(Исключён)'}
+                    Ваш обет тьмы {currentPlayer.isDisqualified && '(Проклят)'}
                   </h2>
                   <p className="text-sm text-halloween-mist/70">
                     {currentPlayer.isDisqualified
-                      ? 'Вы исключены из игры. Вы можете наблюдать, но не можете участвовать.'
-                      : 'Кликайте по страхам, которые уже прозвучали во время розыгрыша.'}
+                      ? 'Вы прокляты и изгнаны из круга. Можете лишь наблюдать из тени.'
+                      : 'Отмечайте страхи, которые уже были призваны во время обряда.'}
                   </p>
                 </div>
-                <p className="text-sm uppercase tracking-[0.35em] text-halloween-mist/60">
-                  Закрыто: {currentPlayer.markedNumbers.length} / {currentPlayer.ticket.length}
-                </p>
+                <div className="text-sm uppercase tracking-[0.35em] text-halloween-mist/60 text-right">
+                  <div>Закрыто:</div>
+                  <div className="text-halloween-green font-semibold text-base">
+                    {currentPlayer.markedNumbers.length} / {currentPlayer.ticket.length}
+                  </div>
+                </div>
               </div>
 
               {/* Предупреждения и сообщения */}
@@ -250,11 +253,11 @@ export default function PlayingPhase() {
                   onClick={checkWinner}
                   className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
                 >
-                  Завершить ритуал! 🔮
+                  Заявить о победе! 🔮
                 </button>
               ) : !currentPlayer.isDisqualified ? (
                 <div className="rounded-2xl border border-halloween-ash/60 bg-halloween-black/50 p-4 text-center text-sm text-halloween-mist/70 shadow-inner">
-                  💡 Будьте осторожны: отметьте только те страхи, что уже были вытянуты.
+                  ☠️ Помните: отметьте лишь те страхи, что уже были призваны. Ошибка стоит души.
                 </div>
               ) : null}
             </div>
