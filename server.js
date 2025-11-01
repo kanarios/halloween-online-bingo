@@ -10,6 +10,16 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
+// Функция перемешивания массива (Fisher-Yates shuffle)
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Глобальное состояние игры на сервере
 let gameState = {
   phase: 'betting',
@@ -92,6 +102,12 @@ app.prepare().then(() => {
 
     // Начало фазы игры
     socket.on('startPlaying', () => {
+      // Перемешиваем билеты всех игроков перед началом розыгрыша
+      gameState.players = gameState.players.map(player => ({
+        ...player,
+        ticket: shuffleArray(player.ticket)
+      }));
+
       gameState.phase = 'playing';
       io.emit('gameState', gameState);
     });
