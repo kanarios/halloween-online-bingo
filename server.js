@@ -58,6 +58,15 @@ app.prepare().then(() => {
 
     // Добавление игрока
     socket.on('addPlayer', (data) => {
+      // Блокируем добавление игроков во время игры и после её завершения
+      if (gameState.phase === 'playing' || gameState.phase === 'finished') {
+        socket.emit('playerRejected', {
+          reason: 'game_in_progress',
+          message: 'Игра уже идёт или завершена. Дождитесь начала новой игры.',
+        });
+        return;
+      }
+
       const newPlayer = {
         id: `player-${Date.now()}-${Math.random()}`,
         name: data.name,

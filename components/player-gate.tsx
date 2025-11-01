@@ -22,22 +22,25 @@ const PHASE_COPY: Record<PlayerGateProps['phase'], { title: string; description:
   },
   playing: {
     title: '🎲 Ритуал уже начался',
-    description: 'Вы все еще можете зарегистрироваться, чтобы наблюдать и играть со своей карточкой.',
-    note: 'После регистрации отметьте страхи, которые уже были вытянуты, чтобы догнать остальных.',
+    description: 'Игра в процессе. Новые игроки не могут присоединиться.',
+    note: 'Дождитесь окончания текущего ритуала. Верховный жрец начнёт новую игру, и вы сможете присоединиться.',
   },
   finished: {
     title: '🎉 Ритуал завершён',
-    description: 'Подождите нового ритуала от верховного жреца.',
-    note: 'Вы можете пройти посвящение заранее, чтобы войти в следующую игру.',
+    description: 'Игра закончена. Подождите нового ритуала от верховного жреца.',
+    note: 'Как только верховный жрец начнёт новую игру, вы сможете зарегистрироваться и принять участие.',
   },
 };
 
 export default function PlayerGate({ phase }: PlayerGateProps) {
-  const { gameState, addPlayer } = useGame();
+  const { gameState, addPlayer, rejectionMessage } = useGame();
   const [name, setName] = useState('');
   const [bet, setBet] = useState(10);
 
   const copy = useMemo(() => PHASE_COPY[phase] ?? PHASE_COPY.betting, [phase]);
+
+  // Блокируем форму во время игры или после её завершения
+  const isFormDisabled = phase === 'playing' || phase === 'finished';
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,9 +96,10 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
                     type="text"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    className="w-full rounded-xl border border-halloween-ash/60 bg-halloween-black/70 px-4 py-3 text-base text-halloween-mist placeholder:text-halloween-mist/40 focus:border-halloween-green focus:outline-none focus:ring-2 focus:ring-halloween-green/30"
+                    className="w-full rounded-xl border border-halloween-ash/60 bg-halloween-black/70 px-4 py-3 text-base text-halloween-mist placeholder:text-halloween-mist/40 focus:border-halloween-green focus:outline-none focus:ring-2 focus:ring-halloween-green/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Введите ваше имя и фамилию"
                     required
+                    disabled={isFormDisabled}
                   />
                 </div>
 
@@ -113,7 +117,8 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
                       max={MAX_BET}
                       value={bet}
                       onChange={(event) => setBet(Number(event.target.value))}
-                      className="flex-1 accent-halloween-green"
+                      className="flex-1 accent-halloween-green disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={isFormDisabled}
                     />
                     <span className="inline-flex h-14 w-20 items-center justify-center rounded-xl border border-halloween-green/40 bg-halloween-black/60 text-2xl font-semibold text-halloween-green shadow-haunted">
                       {bet}
@@ -123,11 +128,18 @@ export default function PlayerGate({ phase }: PlayerGateProps) {
 
                 <button
                   type="submit"
-                  className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60"
+                  className="w-full rounded-xl border border-transparent bg-gradient-to-r from-halloween-orange via-halloween-ember to-halloween-orange px-6 py-4 text-lg font-semibold uppercase tracking-[0.3em] text-halloween-mist shadow-haunted-glow transition hover:shadow-[0_0_45px_rgba(161,22,16,0.65)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-halloween-green/60 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100"
+                  disabled={isFormDisabled}
                 >
-                  Присоединиться к ритуалу
+                  {isFormDisabled ? 'Дождитесь начала новой игры' : 'Присоединиться к ритуалу'}
                 </button>
               </form>
+
+              {rejectionMessage && (
+                <div className="rounded-2xl border border-halloween-ember/60 bg-halloween-ember/10 p-5 text-base text-halloween-mist shadow-haunted-glow">
+                  ⚠️ {rejectionMessage}
+                </div>
+              )}
 
               {copy.note && (
                 <div className="rounded-2xl border border-halloween-green/20 bg-black/30 p-5 text-sm text-halloween-mist/70 shadow-inner">

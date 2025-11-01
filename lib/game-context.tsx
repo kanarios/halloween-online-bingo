@@ -11,6 +11,11 @@ interface CheckResultData {
   message?: string;
 }
 
+interface PlayerRejectedData {
+  reason: string;
+  message: string;
+}
+
 interface GameContextType {
   gameState: GameState;
   currentPlayer: Player | null;
@@ -25,6 +30,7 @@ interface GameContextType {
   isConnected: boolean;
   isAdmin: boolean;
   checkResult: CheckResultData | null;
+  rejectionMessage: string | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -46,6 +52,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
   const [checkResult, setCheckResult] = useState<CheckResultData | null>(null);
+  const [rejectionMessage, setRejectionMessage] = useState<string | null>(null);
 
   // Загружаем playerId из localStorage при инициализации
   useEffect(() => {
@@ -100,6 +107,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       setTimeout(() => {
         setCheckResult(null);
       }, 8000);
+    });
+
+    // Получаем сообщение об отказе в подключении
+    socket.on('playerRejected', (data: PlayerRejectedData) => {
+      console.log('Player rejected:', data);
+      setRejectionMessage(data.message);
+      // Автоматически очищаем сообщение через 10 секунд
+      setTimeout(() => {
+        setRejectionMessage(null);
+      }, 10000);
     });
 
     return () => {
@@ -170,6 +187,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         isConnected,
         isAdmin,
         checkResult,
+        rejectionMessage,
       }}
     >
       {children}
